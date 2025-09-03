@@ -1,25 +1,25 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
-	"errors"
-	"context"
-	"time"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 func (app *application) serve() error {
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", app.config.port),
-		Handler: app.routes(),
-		IdleTimeout: time.Minute,
-		ReadTimeout: 5 * time.Second,
-		WriteTimeout: 10 *time.Second,
-		ErrorLog: slog.NewLogLogger(app.logger.Handler(), slog.LevelError),
+		Addr:         fmt.Sprintf(":%d", app.config.port),
+		Handler:      app.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		ErrorLog:     slog.NewLogLogger(app.logger.Handler(), slog.LevelError),
 	}
 
 	shutdownError := make(chan error)
@@ -34,13 +34,13 @@ func (app *application) serve() error {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
-		shutdownError <-srv.Shutdown(ctx)
+		shutdownError <- srv.Shutdown(ctx)
 	}()
 
 	app.logger.Info("starting server", "addr", srv.Addr, "env", app.config.env)
 
-	err :=  srv.ListenAndServe()
-	if !errors.Is(err, http.ErrServerClosed){
+	err := srv.ListenAndServe()
+	if !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 

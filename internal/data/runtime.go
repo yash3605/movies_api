@@ -1,13 +1,14 @@
 package data
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
-	"errors"
 )
 
 var ErrInvalidRuntimeFormat = errors.New("invalid runtime format")
+
 type Runtime int32
 
 func (r Runtime) MarshalJSON() ([]byte, error) {

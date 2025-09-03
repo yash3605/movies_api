@@ -4,20 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
 	"fmt"
 	"github.com/greenlight/internal/validator"
 	"github.com/lib/pq"
+	"time"
 )
 
 type Movie struct {
-	ID 			int64			`json:"id"`
-	CreatedAt 	time.Time		`json:"-"`
-	Title 		string			`json:"title"`
-	Year 		int32			`json:"year,omitempty"`
-	Runtime 	Runtime			`json:"runtime,omitempty"`
-	Genres 		[]string		`json:"genres,omitempty"`
-	Version 	int32			`json:"version"`
+	ID        int64     `json:"id"`
+	CreatedAt time.Time `json:"-"`
+	Title     string    `json:"title"`
+	Year      int32     `json:"year,omitempty"`
+	Runtime   Runtime   `json:"runtime,omitempty"`
+	Genres    []string  `json:"genres,omitempty"`
+	Version   int32     `json:"version"`
 }
 
 func ValidateMovie(v *validator.Validator, movie *Movie) {
@@ -76,7 +76,7 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 		&movie.Runtime,
 		pq.Array(&movie.Genres),
 		&movie.Version,
-		)
+	)
 
 	if err != nil {
 		switch {
@@ -158,7 +158,7 @@ func (m MovieModel) GetAll(title string, genres []string, filter Filters) ([]*Mo
 	ORDER BY %s %s, id ASC
 	LIMIT $3 OFFSET $4`, filter.sortColumn(), filter.sortDirection())
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	args := []any{title, pq.Array(genres), filter.limit(), filter.offset()}
@@ -185,7 +185,7 @@ func (m MovieModel) GetAll(title string, genres []string, filter Filters) ([]*Mo
 			&movie.Runtime,
 			pq.Array(&movie.Genres),
 			&movie.Version,
-			)
+		)
 		if err != nil {
 			return nil, Metadata{}, err
 		}

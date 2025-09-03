@@ -6,21 +6,21 @@ import (
 )
 
 type Filters struct {
-	Page			int
-	PageSize		int
-	Sort			string
-	SortSafeList	[]string
+	Page         int
+	PageSize     int
+	Sort         string
+	SortSafeList []string
 }
 
 type Metadata struct {
-	CurrentPage		int `json:"current_page,omitempty"`
-	PageSize		int `json:"page_size,omitempty"`
-	FirstPage		int `json:"first_page,omitempty"`
-	LastPage		int	`json:"last_page,omitempty"`
-	TotalRecords	int `json:"total_records,omitempty"`
+	CurrentPage  int `json:"current_page,omitempty"`
+	PageSize     int `json:"page_size,omitempty"`
+	FirstPage    int `json:"first_page,omitempty"`
+	LastPage     int `json:"last_page,omitempty"`
+	TotalRecords int `json:"total_records,omitempty"`
 }
 
-func ValidateFilters(v *validator.Validator, f Filters){
+func ValidateFilters(v *validator.Validator, f Filters) {
 	v.Check(f.Page > 0, "page", "Must be Greater than zero")
 	v.Check(f.Page <= 10_000_000, "page", "Must be a Maximum of 10 million")
 	v.Check(f.PageSize > 0, "page_size", "Must be greater than zero")
@@ -61,10 +61,10 @@ func calculateMetadata(totalRecords, page, pageSize int) Metadata {
 	}
 
 	return Metadata{
-		CurrentPage: page,
-		PageSize: pageSize,
-		FirstPage: 1,
-		LastPage: (totalRecords + pageSize - 1) / pageSize,
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     (totalRecords + pageSize - 1) / pageSize,
 		TotalRecords: totalRecords,
 	}
 }

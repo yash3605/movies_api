@@ -1,15 +1,16 @@
 package main
+
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"strings"
-	"net/http"
-	"strconv"
-	"github.com/julienschmidt/httprouter"
-	"net/url"
 	"github.com/greenlight/internal/validator"
+	"github.com/julienschmidt/httprouter"
+	"io"
+	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 func (app *application) readIDParam(r *http.Request) (int64, error) {
@@ -65,7 +66,7 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 			return errors.New("Body contains badly-formed JSON")
 
 		case errors.As(err, &unmarshalTypeError):
-			if unmarshalTypeError.Field != ""{
+			if unmarshalTypeError.Field != "" {
 				return fmt.Errorf("Body contains incorrect JSON type for field %q", unmarshalTypeError.Field)
 			}
 			return fmt.Errorf("Body contains incorrect JSON type (at character %d)", unmarshalTypeError.Offset)
@@ -89,7 +90,7 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 	}
 
 	err = dec.Decode(&struct{}{})
-	if !errors.Is(err, io.EOF){
+	if !errors.Is(err, io.EOF) {
 		return errors.New("Body must only contain a single JSON value")
 	}
 
@@ -99,14 +100,14 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 func (app *application) readString(qs url.Values, key string, defaultValue string) string {
 	s := qs.Get(key)
 
-	if s == ""{
+	if s == "" {
 		return defaultValue
 	}
 
 	return s
 }
 
-func (app *application) readCSV(qs url.Values, key string,  defaultValue []string) []string {
+func (app *application) readCSV(qs url.Values, key string, defaultValue []string) []string {
 	csv := qs.Get(key)
 
 	if csv == "" {
@@ -126,7 +127,7 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		v.AddError(key, "Must be an integer value")
-		return  defaultValue
+		return defaultValue
 	}
 
 	return i

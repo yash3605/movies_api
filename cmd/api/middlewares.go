@@ -1,12 +1,14 @@
 package main
+
 import (
 	"fmt"
-	"net"
-	"sync"
-	"net/http"
-	"time"
 	"golang.org/x/time/rate"
+	"net"
+	"net/http"
+	"sync"
+	"time"
 )
+
 func (app *application) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
@@ -21,22 +23,19 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 
 func (app *application) rateLimit(next http.Handler) http.Handler {
 
-
 	type client struct {
-		limiter *rate.Limiter
+		limiter  *rate.Limiter
 		lastSeen time.Time
 	}
 
 	var (
-		mu sync.Mutex
+		mu      sync.Mutex
 		clients = make(map[string]*client)
 	)
-
 
 	go func() {
 		for {
 			time.Sleep(time.Minute)
-
 
 			mu.Lock()
 			for ip, client := range clients {
@@ -50,7 +49,7 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 	}()
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if app.config.limiter.enabled{
+		if app.config.limiter.enabled {
 			ip, _, err := net.SplitHostPort(r.RemoteAddr)
 			if err != nil {
 				app.serverErrorResponse(w, r, err)
